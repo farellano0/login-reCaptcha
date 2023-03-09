@@ -1,0 +1,31 @@
+<%- layout('layouts/main.ejs') %>
+
+<div class="row">
+    <div class="col-md-4 offset-md-4">
+        <div class="card mt-4">
+            <div class="card-header text-center">
+                <h3>SIGN UP</h3>
+            </div>
+            <div class="card-body">
+                <form action="/signup" method="POST">
+                    <div class="form-group">
+                        <label for="" class="col-form-label"><strong>Nombre completo: </strong></label>
+                        <input class="form-control" type="text" name="name" placeholder="Ingresa tu nombre(s)">
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="col-form-label"><strong>Correo electrónico: </strong></label>
+                        <input class="form-control" type="email" name="email" placeholder="example@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="col-form-label"><strong>Contraseña</strong></label>
+                        <input class="form-control" type="password" name="password" placeholder="Escribe tu contraseña">
+                    </div>
+                    <button class="btn btn-primary btn-block mt-4" type="submit">
+                        Sign Up
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>

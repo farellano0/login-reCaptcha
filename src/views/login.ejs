@@ -1,0 +1,31 @@
+<%- layout('layouts/main.ejs') %>
+    <div class="row">
+        <div class="col-md-4 offset-md-4">
+            <div class="card mt-4">
+                <div class="card-header text-center">
+                    <h3>LOG IN</h3>
+                </div>
+                <div class="card-body">
+                    <form action="/login" method="POST">
+                        <div class="form-group">
+                            <label for="" class="col-form-label"><strong>Correo electrónico:</strong></label>
+                            <input class="form-control" type="email" name="email" placeholder="example@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="" class="col-form-label"><strong>Contraseña: </strong></label>
+                            <input class="form-control" type="password" name="password" placeholder="Escribe tu contraseña">
+                        </div>
+                        <div class="form-group">
+                            <div name="reCaptcha" class="g-recaptcha" data-sitekey="6LeFk-AkAAAAAIR6bHbr3Hzg-9v6mjbazN_Prjfg"></div>
+                        </div>
+                    
+                        <div class="">
+                            <button class="btn btn-primary btn-block mt-4" type="submit">
+                                Log In
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
