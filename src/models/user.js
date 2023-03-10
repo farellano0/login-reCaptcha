@@ -1,19 +1,19 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt-nodejs');
-const { Schema } = mongoose;
+const mongoose = require('mongoose'); // Importamos la librería de mongoose
+const bcrypt = require('bcrypt-nodejs'); // Importamos la librería de bcrypt
+const { Schema } = mongoose; // Extraemos el Schema de mongoose
 
-const userSchema = new Schema({
+const userSchema = new Schema({ // Creamos el esquema de la base de datos
     name: String,
     email: String,
     password: String
 });
 
-userSchema.methods.encryptPassword = (password) => {
+userSchema.methods.encryptPassword = (password) => { // Creamos el método para encriptar la contraseña
     return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 }
 
-userSchema.methods.comparePassword = function (password) {
+userSchema.methods.comparePassword = function (password) { // Creamos el método para comparar la contraseña
     return bcrypt.compareSync(password, this.password);
 }
 
-module.exports = mongoose.model('users', userSchema);
+module.exports = mongoose.model('users', userSchema); // Exportamos el modelo
