@@ -53,9 +53,7 @@ passport.use('local-login', new LocalStrategy({ // Configura la estrategia local
     if (!userCaptchaResponse) { // Si el usuario no responde el captcha, se envía un mensaje de error
         return done(null, false, req.flash('loginMessage', 'Por favor, complete el captcha.'));
     }
-    
-    done(null, user); // Si el usuario existe y la contraseña coincide, se inicia sesión
-    
+
     // Realiza una solicitud HTTP a la API de verificación del captcha de Google
     const verificationUrl = 'https://www.google.com/recaptcha/api/siteverify?secret=' + '6LeFk-AkAAAAAEsL0ueaotzVhz6SasCVKPX5LcoO' + '&response=' + userCaptchaResponse + '&remoteip=' + req.connection.remoteAddress;
     
@@ -64,4 +62,7 @@ passport.use('local-login', new LocalStrategy({ // Configura la estrategia local
         if (body.success !== undefined && !body.success) { // Si el captcha no pudo ser verificado, se envía un mensaje de error
             return done(null, false, req.flash('loginMessage', 'El captcha no pudo ser verificado.'));
         }});
+    
+    done(null, user); // Si el usuario existe y la contraseña coincide, se inicia sesión
+    
 }));
