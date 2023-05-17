@@ -30,6 +30,29 @@ passport.use('local-signup', new LocalStrategy({ // Configura la estrategia loca
         newUser.name = req.body.name;
         newUser.email = email;
         newUser.password = newUser.encryptPassword(password);
+        newUser.usertype = 0;
+        await newUser.save();
+        done(null, newUser);
+    }
+}));
+
+passport.use('local-signup2', new LocalStrategy({ // Configura la estrategia local-signup
+    name: 'name',
+    usernameField: 'email',
+    passwordField: 'password',
+    passReqToCallback: true
+}, async (req, email, password, done) => { // Función que se ejecuta cuando se realiza una petición de registro
+
+    const user = await User.findOne({'email': email}); // Busca un usuario con el mismo correo electrónico
+    
+    if(user){ // Si el usuario existe, se envía un mensaje de error
+        return done(null, false, req.flash('signupMessage', 'El correo electrónico ya esta registrado.'));
+    } else {
+        const newUser = new User(); // Si el usuario no existe, se crea uno nuevo
+        newUser.name = req.body.name;
+        newUser.email = email;
+        newUser.password = newUser.encryptPassword(password);
+        newUser.usertype = 1;
         await newUser.save();
         done(null, newUser);
     }

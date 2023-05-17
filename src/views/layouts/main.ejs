@@ -9,43 +9,41 @@
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
             async defer></script>
+    <script src="https://kit.fontawesome.com/7f30cdf123.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div class="container-fluid bg-dark  mb-4">
-        <!-- Image and text -->
-        <nav class="navbar navbar-expand-lg navbar-light">
-        <a class="navbar-brand text-light font-weight-bold" href="/">
-            CONTROL DE ACCESO EN RED
-        </a>
-        <div class="collapse navbar-collapse" id="navbarNav">
+    <div class="container-fluid sticky-top" style="background-color: #993D33;">
+        <!-- NavBar -->
+        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #993D33;">
+            <a class="navbar-brand font-weight-bold" href="/"><i class="fa-solid fa-hotel"></i> HOTEL</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
-                <% if (user) { %>
-                    <li class="nav-item active">
-                        <a href="/logout" class="nav-link text-light font-weight-bold">Log out</a>
-                    </li>
-                <% } else { %>
-                    <li class="nav-item active">
-                        <a href="/signup" class="nav-link text-light font-weight-bold">Sign Up</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a href="/" class="nav-link text-light font-weight-bold">Log in</a>
-                    </li>
-                <% } %>
+                <li class="nav-item">
+                    <a class="nav-link font-weight-bold" href="/"><i class="fa-solid fa-house"></i></i> Inicio <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link font-weight-bold" href="/habitaciones"><i class="fa-solid fa-bed"></i> Habitaciones</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link font-weight-bold" href="#"><i class="fa-solid fa-images"></i> Galeria</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link font-weight-bold" href="#"><i class="fa-solid fa-envelope"></i> Contáctanos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link font-weight-bold" href="/login"><i class="fa-solid fa-user"></i> Iniciar Sesión</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link font-weight-bold" href="/signup"><i class="fa-solid fa-user-plus"></i> Registrarse</a>
+                </li>
             </ul>
-        </div>
+            </div>
         </nav>
     </div>
-    <div class="container">
-        <% if (loginMessage.lenght != 0) { %>
-            <div class="alert alert-danger"><%= loginMessage %></div>
-        <% } %>
-    
-        <% if (signupMessage.lenght != 0) { %>
-            <div class="alert alert-danger"><%= signupMessage %></div>
-        <% } %>
-    
-        <%- body %>    
-    </div>
+    <%- body %>  
     
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>

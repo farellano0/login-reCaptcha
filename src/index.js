@@ -20,6 +20,7 @@ app.set('port', process.env.PORT || 3000); // Establece el puerto en el que se e
 // middlewares son funciones que se ejecutan antes de que lleguen a las rutas
 app.use(morgan('dev')); // Usa el módulo morgan para ver las peticiones que se hacen al servidor
 app.use(express.urlencoded({extended: false})); // Usa el módulo express.urlencoded para entender los datos que llegan desde un formulario
+app.use(express.static('public')); // Usa el módulo express.static para servir archivos estáticos
 app.use(session({ // Usa el módulo express-session para crear sesiones
     secret: 'mySecretSession',
     resave: true,
