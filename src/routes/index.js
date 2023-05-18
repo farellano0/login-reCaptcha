@@ -19,7 +19,7 @@ router.get('/signup2', (req, res, next) => { // Ruta de registro de recepcionist
     res.render('signup2');
 });
 
-router.get('/habitaciones', (req, res, next) => {
+router.get('/habitaciones', (req, res, next) => { // Ruta de habitaciones
     res.render('habitaciones');
 })
 
