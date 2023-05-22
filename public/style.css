@@ -7,3 +7,26 @@
 .room-list .room-list-item .room-list-content {
     padding: 0 30px;
 }
+
+.room-list-search .room-item {
+    box-shadow: 0 0 20px 0 rgba(0,0,0,.1);
+    margin-bottom: 30px;
+    border: 1px solid #e6e6e6;
+    border-radius: 5px;
+    padding: 20px 10px;
+}
+
+.list-inline, .list-unstyled {
+    padding-left: 0;
+    list-style: none;
+}
+
+.tarjeta {
+    background-color: white;
+    border: 1px solid #e6e6e6;
+    box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.212);
+}
+
+.custom-shadow {
+    box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.212); /* Valores de ejemplo */
+}

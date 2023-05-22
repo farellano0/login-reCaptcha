@@ -6,7 +6,7 @@ const userSchema = new Schema({ // Creamos el esquema de la base de datos
     name: String,
     email: String,
     password: String,
-    usertype: Number
+    usertype: String
 });
 
 userSchema.methods.encryptPassword = (password) => { // Creamos el método para encriptar la contraseña

@@ -33,6 +33,7 @@ app.use(passport.session());
 app.use((req, res, next) => { 
     app.locals.signupMessage = req.flash('signupMessage'); // Usa el módulo connect-flash para enviar mensajes entre vistas
     app.locals.loginMessage = req.flash('loginMessage');
+    app.locals.error = req.flash('error');
     app.locals.user = req.user; // trae la información del usuario que se autenticó
     next();
 })

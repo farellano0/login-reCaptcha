@@ -1,5 +1,8 @@
+const Swal = require('sweetalert2')
 const express = require('express'); // Importa el módulo express
 const router = express.Router(); // Importa el módulo router de express
+const Reservation = require('../models/reservations'); // Inyectamos el modelo de reserva
+
 
 const passport = require('passport'); // Importa el módulo passport
 
@@ -21,16 +24,64 @@ router.get('/signup2', (req, res, next) => { // Ruta de registro de recepcionist
 
 router.get('/habitaciones', (req, res, next) => { // Ruta de habitaciones
     res.render('habitaciones');
-})
+});
+
+router.get('/reservaciones', isAuthenticated, (req, res, next) => { // Ruta de habitaciones
+    res.render('reservaciones');
+});
+
+router.get('/reservar', isAuthenticated, (req, res, next) => {
+    res.render('reservar');
+});
+
+
+router.post('/reservar', function (req, res){
+    // Obtener los datos enviados en la solicitud
+    const {
+        checkInDate,
+        checkOutDate,
+        selectRoom,
+        noPersons,
+        fullName,
+        email,
+        tel
+    } = req.body;
+
+    // Verificar si algún dato requerido está faltando
+    if (!checkInDate || !checkOutDate || !selectRoom || !noPersons || !fullName || !email || !tel) {
+        // Redireccionar al formulario de reserva con un mensaje de error
+        req.flash('error', 'Todos los campos son requeridos');
+        return res.redirect('/reservar');
+    }
+
+    // Crear la instancia de la reserva
+    const myReservation = new Reservation({
+        fecha_inicio: checkInDate,
+        fecha_fin: checkOutDate,
+        habitacion: selectRoom,
+        personas: noPersons,
+        huesped: fullName,
+        email: email,
+        tel: tel,
+    });
+
+    // Guardar la reserva en la base de datos
+    myReservation.save();
+    res.redirect('/reservaciones')
+});
+
+router.get('/disponibilidad', (req, res, next) => { // Ruta de habitaciones
+    res.render('disponibilidad');
+});
 
 router.post('/signup', passport.authenticate('local-signup' ,{ // Ruta de registro que utiliza la estrategia local-signup
-    successRedirect: '/login',
+    successRedirect: '/profile',
     failureRedirect: '/signup',
     passReqToCallback: true
 }));
 
 router.post('/signup2', passport.authenticate('local-signup2' ,{ // Ruta de registro que utiliza la estrategia local-signup
-    successRedirect: '/login',
+    successRedirect: '/profile',
     failureRedirect: '/signup2',
     passReqToCallback: true
 }));
@@ -56,7 +107,7 @@ function isAuthenticated(req, res, next) { // Función que verifica si el usuari
         return next();
     }
 
-    res.redirect('/');
+    res.redirect('/login');
 }
 
 

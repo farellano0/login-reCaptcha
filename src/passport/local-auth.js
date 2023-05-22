@@ -25,18 +25,25 @@ passport.use('local-signup', new LocalStrategy({ // Configura la estrategia loca
     
     if(user){ // Si el usuario existe, se envía un mensaje de error
         return done(null, false, req.flash('signupMessage', 'El correo electrónico ya esta registrado.'));
-    } else {
-        const newUser = new User(); // Si el usuario no existe, se crea uno nuevo
-        newUser.name = req.body.name;
-        newUser.email = email;
-        newUser.password = newUser.encryptPassword(password);
-        newUser.usertype = 0;
-        await newUser.save();
-        done(null, newUser);
     }
+
+    // Verificar la validez de la contraseña
+    if (!validatePassword(password)) {
+        return done(null, false, req.flash('signupMessage', 'La contraseña debe tener al menos 8 caracteres, una mayúscula, un número y un carácter especial.'));
+    }
+
+    const newUser = new User(); // Si el usuario no existe, se crea uno nuevo
+    newUser.name = req.body.name;
+    newUser.email = email;
+    newUser.password = newUser.encryptPassword(password);
+    newUser.usertype = "Huésped";
+    await newUser.save();
+    done(null, newUser);
+    
+    
 }));
 
-passport.use('local-signup2', new LocalStrategy({ // Configura la estrategia local-signup
+passport.use('local-signup2', new LocalStrategy({ // Configura la estrategia local-signup2
     name: 'name',
     usernameField: 'email',
     passwordField: 'password',
@@ -47,15 +54,20 @@ passport.use('local-signup2', new LocalStrategy({ // Configura la estrategia loc
     
     if(user){ // Si el usuario existe, se envía un mensaje de error
         return done(null, false, req.flash('signupMessage', 'El correo electrónico ya esta registrado.'));
-    } else {
-        const newUser = new User(); // Si el usuario no existe, se crea uno nuevo
-        newUser.name = req.body.name;
-        newUser.email = email;
-        newUser.password = newUser.encryptPassword(password);
-        newUser.usertype = 1;
-        await newUser.save();
-        done(null, newUser);
     }
+
+    // Verificar la validez de la contraseña
+    if (!validatePassword(password)) {
+        return done(null, false, req.flash('signupMessage', 'La contraseña debe tener al menos 8 caracteres, una mayúscula, un número y un carácter especial.'));
+    }
+    
+    const newUser = new User(); // Si el usuario no existe, se crea uno nuevo
+    newUser.name = req.body.name;
+    newUser.email = email;
+    newUser.password = newUser.encryptPassword(password);
+    newUser.usertype = "Recepcionista";
+    await newUser.save();
+    done(null, newUser);
 }));
 
 passport.use('local-login', new LocalStrategy({ // Configura la estrategia local-login
@@ -89,3 +101,22 @@ passport.use('local-login', new LocalStrategy({ // Configura la estrategia local
     done(null, user); // Si el usuario existe y la contraseña coincide, se inicia sesión
     
 }));
+
+// Función para validar la contraseña
+function validatePassword(password) {
+    // Verificar longitud mínima
+    if (password.length < 8) {
+        return false;
+    }
+
+    // Verificar al menos una mayúscula y un carácter especial
+    const uppercaseRegex = /[A-Z]/;
+    const specialCharRegex = /[^A-Za-z0-9]/;
+    const digitRegex = /\d/;
+
+    if (!uppercaseRegex.test(password) || !digitRegex.test(password) || !specialCharRegex.test(password)) {
+        return false;
+    }
+
+    return true;
+}

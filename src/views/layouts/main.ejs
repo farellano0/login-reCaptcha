@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LogIn</title>
+    <title>Hotel</title>
     <link rel="stylesheet" href="/style.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
             async defer></script>
     <script src="https://kit.fontawesome.com/7f30cdf123.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body background="/img/Fondo.jpg">
     <div class="container-fluid sticky-top" style="background-color: #993D33;">
@@ -22,52 +23,56 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
+                <li class="nav-item"> <!-- Inicio -->
                     <a class="nav-link font-weight-bold" href="/"><i class="fa-solid fa-house"></i></i> Inicio <span class="sr-only">(current)</span></a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link font-weight-bold" href="/habitaciones"><i class="fa-solid fa-bed"></i> Habitaciones</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link font-weight-bold" href="/login"><i class="fa-solid fa-user"></i> Iniciar Sesión</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link font-weight-bold" href="/signup"><i class="fa-solid fa-user-plus"></i> Registrarse</a>
-                </li>
+                <% if(!user){ %>
+                    <li class="nav-item"> <!-- Habitaciones -->
+                        <a class="nav-link font-weight-bold" href="/habitaciones"><i class="fa-solid fa-bed"></i> Habitaciones</a>
+                    </li>
+                <% } %>
+                <% if(!user){ %>
+                    <li class="nav-item"> <!-- Login -->
+                        <a class="nav-link font-weight-bold" href="/login"><i class="fa-solid fa-user"></i> Iniciar Sesión</a>
+                    </li>
+                    <li class="nav-item"> <!-- Signup-->
+                        <a class="nav-link font-weight-bold" href="/signup"><i class="fa-solid fa-user-plus"></i> Registrarse</a>
+                    </li>
+                <% } else if(user.usertype === "Huésped") { %> <!-- Navbar de huéped -->
+                    <li class="nav-item"> <!-- Mi perfil -->
+                        <a class="nav-link font-weight-bold" href="/profile"><i class="fa-solid fa-user"></i></i> Mi perfil</a>
+                    </li>
+                    <li class="nav-item"> <!-- Mis reservaciones -->
+                        <a class="nav-link font-weight-bold" href="/reservaciones"><i class="fa-regular fa-calendar-days"></i></i> Mis reservaciones</a>
+                    </li>
+                    <li class="nav-item"> <!-- Habitaciones -->
+                        <a class="nav-link font-weight-bold" href="/habitaciones"><i class="fa-solid fa-bed"></i> Habitaciones</a>
+                    </li>
+                    <li class="nav-item"> <!-- Reservar -->
+                        <a class="nav-link font-weight-bold" href="/reservar"><i class="fa-solid fa-bell-concierge"></i> Reservar</a>
+                    </li>
+                    <li class="nav-item"> <!-- LogOut -->
+                        <a class="nav-link font-weight-bold" href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+                    </li>
+                <% } else { %>
+                    <li class="nav-item"> <!-- Habitaciones -->
+                        <a class="nav-link font-weight-bold" href="/rooms"><i class="fa-solid fa-bed"></i> Habitaciones</a>
+                    </li>
+                    <li class="nav-item"> <!-- Reservas -->
+                        <a class="nav-link font-weight-bold" href="/reservas"><i class="fa-solid fa-bell-concierge"></i> Reservas</a>
+                    </li>
+                    <li class="nav-item"> <!-- Huéspedes -->
+                        <a class="nav-link font-weight-bold" href="/huespedes"><i class="fa-solid fa-person-walking-luggage"></i> Huéspedes</a>
+                    </li>
+                    <li class="nav-item"> <!-- LogOut -->
+                        <a class="nav-link font-weight-bold" href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+                    </li>
+                <% } %>
             </ul>
             </div>
         </nav>
     </div>
-    <%- body %>  
-    <!-- Footer -->
-    <div class="container-fluid" style="background-color: #993D33;">
-        <div class="row">
-            <!---Index--->
-            <div class="col-md-4 mt-4">
-                <h3 class="text-center font-weight-bold" style="color: white;">Index</h3>
-                <ul style="list-style-type: none; color: inherit; text-decoration: none;">
-                    <li><a href="/" style="color: white;"><i class="fa-solid fa-link"></i> Inicio</a></li>
-                    <li><a href="#" style="color: white;"><i class="fa-solid fa-link"></i> Habitaciones</a></li>
-                    <li><a href="/login" style="color: white;"><i class="fa-solid fa-link"></i> Iniciar sesión</a></li>
-                    <li><a href="/signup" style="color: white;"><i class="fa-solid fa-link"></i> Registrarse</a></li>
-                </ul>
-            </div>
-            <!-- Info -->
-            <div class="col-md-4 mt-4">
-                <ul style="list-style-type: none; color: inherit; text-decoration: none;">
-                    <li><h3 class="text-center font-weight-bold" style="color: white;">Hotel</h3></li>
-                    <li><p class="text-justify" style="color: white;"><i class="fa-solid fa-location-dot"></i> Dirección: Av. Siempre Viva 742</p></li>
-                    <li><p class="text-justify" style="color: white;"><i class="fa-solid fa-square-phone"></i> Teléfono: 55 1234 5678</p></li>
-                    <li><p class="text-justify" style="color: white;"><i class="fa-solid fa-envelope"></i> Correo: hotel@hotel.com</p></li>
-                </ul>
-            </div>
-            <!--Social Media-->
-            <div class="col-md-4 mt-4 text-center mb-3">
-                <h3 class="text-center font-weight-bold mb-2" style="color: white">Redes Sociales</h3>
-                <a href="#"><i class="fa-brands fa-facebook fa-2xl"></i></a>
-            </div>
-        </div>
-    </div>
+    <%- body %>
     
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
