@@ -1,4 +1,3 @@
-const Swal = require('sweetalert2')
 const express = require('express'); // Importa el módulo express
 const router = express.Router(); // Importa el módulo router de express
 const Reservation = require('../models/reservations'); // Inyectamos el modelo de reserva
@@ -27,7 +26,36 @@ router.get('/habitaciones', (req, res, next) => { // Ruta de habitaciones
 });
 
 router.get('/reservaciones', isAuthenticated, (req, res, next) => { // Ruta de habitaciones
-    res.render('reservaciones');
+    // Obtener el EMAIL del usuario autenticado
+    const userEmail = req.user.email;
+
+    // Obtener las reservaciones del usuario actual desde la base de datos
+    Reservation.find({ email: userEmail })
+    .then((reservaciones) => {
+      // Renderizar la vista EJS y pasar los datos de las reservaciones
+        res.render('reservaciones', { reservaciones });
+    })
+    .catch((error) => {
+      // Manejar el error si ocurre
+        console.log(error);
+        res.render('error'); // Renderizar una vista de error, por ejemplo
+    });
+});
+
+router.post('/reservaciones/search', isAuthenticated, async (req, res, next) => {
+    const { search } = req.body;
+    const query = { email: req.user.email,
+        $or: [
+        { habitacion: { $regex: search.toString(), $options: 'i' } }
+        ]
+    };
+    try {
+        const reservaciones = await Reservation.find(query).lean().exec();
+        res.render('reservaciones', { reservaciones });
+    } catch (error) {
+        console.error(error);
+        res.render('error');
+    }
 });
 
 router.get('/reservar', isAuthenticated, (req, res, next) => {
@@ -63,6 +91,7 @@ router.post('/reservar', function (req, res){
         huesped: fullName,
         email: email,
         tel: tel,
+        status: "Pendiente"
     });
 
     // Guardar la reserva en la base de datos

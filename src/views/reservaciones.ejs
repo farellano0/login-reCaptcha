@@ -1,2 +1,73 @@
 <%- layout('layouts/main.ejs') %>
 
+<div class="container-fluid">
+    <div style="background-color: rgba(255, 255, 255, 0.616);">
+        <hr>
+        <h1 class="text-center font-weight-normal mb-3 display-4" style="letter-spacing: 2px;">Mis reservaciones</h1>
+        <p class="text-center font-weight-bold">Encuentra todas tus reservaciones que has hecho</p>
+        <hr>
+    </div>
+    <div class="container" style="background-color: rgba(255, 255, 255, 0.616);">
+        <div class="row justify-content-center">
+            <form class="form-inline" action="/reservaciones/search" method="POST" >
+                <div class="row">
+                    <div class="col-8 w-100">
+                        <input class="form-control mr-sm-2" name="search" type="search" style="width: 100%;" placeholder="Search" aria-label="Search">
+                    </div>
+                    <div class="col-4">
+                        <button class="btn btn-info my-sm-0" type="submit">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="row mt-3 justify-content-center">
+            <% if (reservaciones.length === 0) { %>
+                <p class="text-center" alt="No tienes reservaciones">No tienes reservaciones.</p>
+            <% } else { %>
+                <% reservaciones.forEach((reservacion) => { %>
+                    <div class="card mt-2 mb-2 mr-1 ml-1" style="width: 20rem;">
+                        <% if(reservacion.habitacion === "Ejecutiva"){ %>
+                            <img class="card-img-top" src="/img/ejecutiva.jpeg" alt="Habitación ejecutiva">
+                        <% } else { %>
+                            <img class="card-img-top" src="/img/ejecutiva_doble.jpeg" alt="Habitación doble ejecutiva">
+                        <% } %>
+                        <div class="card-body">
+                            <h5 class="card-title"><%= reservacion.habitacion %></h5>
+                            <hr>
+                            <div class="row">
+                                <div class="col-6">
+                                    <p class="card-text"><strong>Check-In:</strong> <%= reservacion.fecha_inicio.toLocaleDateString() %></p>
+                                </div>
+                                <div class="col-6">
+                                    <p class="card-text"><strong>Check-Out:</strong> <%= reservacion.fecha_fin.toLocaleDateString() %></p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-12">
+                                    <ul class="list-unstyled">
+                                        <li class="mt-2"><p class="card-text"><strong>Huésped: </strong><%= reservacion.huesped %></p></li>
+                                        <li class="mt-2"><p class="card-text"><strong>Email: </strong><%= reservacion.email %></p></li>
+                                        <li class="mt-2"><p class="card-text"><strong>Teléfono: </strong><%= reservacion.tel %></p></li>
+                                        <li class="mt-2"><p class="card-text"><strong>Número de personas: </strong><%= reservacion.personas %></p></li>
+                                    </ul>                                            
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                        
+                                <% if(reservacion.status === "Pendiente"){ %>
+                                    <a class="btn btn-secondary text-light w-100 disabled" alt="Pendiente"><%= reservacion.status %></a>
+                                <% } else if(reservacion.status === "Check-In"){ %>
+                                    <a class="btn btn-success text-light w-100 disabled" alt="Check-In"><%= reservacion.status %></a>
+                                <% } else if(reservacion.status === "Check-Out") { %>
+                                    <a class="btn btn-danger text-light w-100 disabled" alt="Check-Out"><%= reservacion.status %>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } %>
+        </div>
+    </div>
+</div>

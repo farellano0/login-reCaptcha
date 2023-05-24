@@ -9,6 +9,7 @@ const reservationSchema = new Schema({
     huesped: String,
     email: String,
     tel: Number,
+    status: String,
 });
 
 module.exports = mongoose.model('reservations', reservationSchema); // Exportamos el modelo

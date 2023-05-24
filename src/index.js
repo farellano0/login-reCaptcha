@@ -15,7 +15,7 @@ require('./passport/local-auth'); // Importa el archivo local-auth.js
 app.set('views', path.join(__dirname, 'views')); // Establece la ruta de las vistas
 app.engine('ejs', engine); // Establece ejs como motor de plantillas
 app.set('view engine', 'ejs');
-app.set('port', process.env.PORT || 3000); // Establece el puerto en el que se ejecutará el servidor
+app.set('port', process.env.PORT || 80); // Establece el puerto en el que se ejecutará el servidor
 
 // middlewares son funciones que se ejecutan antes de que lleguen a las rutas
 app.use(morgan('dev')); // Usa el módulo morgan para ver las peticiones que se hacen al servidor
