@@ -251,6 +251,35 @@ router.get('/checkout', isAuthenticated, onlyRecep, (req, res, next) =>{
     });
 });
 
+router.post('/checkout/search', isAuthenticated, async (req, res, next) => {
+    const { searchGuest } = req.body;
+    const query = {
+    status: "Check-In",
+    $or: [
+        { huesped: { $regex: searchGuest.toString(), $options: 'i' } },
+        { email: { $regex: searchGuest.toString(), $options: 'i' } },
+    ],
+    };
+    try {
+    const reservaciones = await Reservation.find(query).lean().exec();
+    res.render('checkout', { reservaciones });
+    } catch (error) {
+    res.render('error');
+    }
+});
+
+router.post('/checkOutReservation', isAuthenticated, onlyRecep, async (req, res, next) => {
+    await Reservation.findByIdAndUpdate(req.body.id, {
+        status: 'Check-Out'
+    })
+    .then(() => {
+        res.redirect('/checkout')
+    })
+    .catch((error) => {
+        next(error);
+    });
+});
+
 router.post('/reservas/search', isAuthenticated, async (req, res, next) => {
     const { search } = req.body;
     const query = {
@@ -331,7 +360,7 @@ router.post('/addReservation', (req, res) => {
     res.redirect('/reservas');
 });
 
-router.post('/checkInReservation', isAuthenticated, onlyGuest, async (req, res, next) => {
+router.post('/checkInReservation', isAuthenticated, onlyRecep, async (req, res, next) => {
     await Reservation.findByIdAndUpdate(req.body.id, {
         status: 'Check-In'
     })

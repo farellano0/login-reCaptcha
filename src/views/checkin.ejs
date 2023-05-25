@@ -59,7 +59,6 @@
                                     <li class="mt-2"><p class="card-text"><strong>Email: </strong><%= reservacion.email %></p></li>
                                     <li class="mt-2"><p class="card-text"><strong>Teléfono: </strong><%= reservacion.tel %></p></li>
                                     <li class="mt-2"><p class="card-text"><strong>Número de personas: </strong><%= reservacion.personas %></p></li>
-                                    <li style="display: none;"><p><%= reservacion._id %></p></li>
                                 </ul>                                            
                             </div>
                         </div>
@@ -67,8 +66,9 @@
                         <% if(reservacion.status === "Pendiente"){ %>
                             <div class="d-flex row">
                                 <div class="col-12">
-                                    <form action="checkInReservation/<%= reservacion._id %>" method="POST">
-                                        <button type="submit" class="btn btn-success text-light w-100" id="btnEdit">Check-in</button>
+                                    <form action="checkInReservation" method="POST">
+                                        <input type="text" name="id" id="id" value="<%= reservacion._id %>" style="display: none;">
+                                        <button type="submit" class="btn btn-success text-light w-100" id="btnEdit">Hacer Check-In</button>
                                     </form>
                                 </div>
                             </div>
