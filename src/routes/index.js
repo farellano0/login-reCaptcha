@@ -1,60 +1,76 @@
-const express = require('express'); // Importa el módulo express
-const router = express.Router(); // Importa el módulo router de express
-const Reservation = require('../models/reservations'); // Inyectamos el modelo de reserva
+const express = require('express');
+const router = express.Router();
+const passport = require('passport');
+const Reservation = require('../models/reservations');
 
+/*---------------------------- FUNCIONES ---------------------------------- */
 
-const passport = require('passport'); // Importa el módulo passport
+function isAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+    return next();
+    }
+    res.redirect('/login');
+}
 
-router.get('/', (req, res, next) => { // Ruta raíz
+function onlyGuest(req, res, next) {
+    if (req.user.usertype === 'Huésped') {
+    return next();
+    }
+    res.redirect('/');
+}
+
+/* ----------------------------------------------------------------------- */
+/* ------------------------------- RAÍZ ---------------------------------- */
+
+router.get('/', (req, res, next) => {
     res.render('index');
 });
 
-router.get('/login', (req, res, next) => { // Ruta raíz
+router.get('/login', (req, res, next) => {
     res.render('login');
 });
 
-router.get('/signup', (req, res, next) => { // Ruta de registro
+router.get('/signup', (req, res, next) => {
     res.render('signup');
 });
 
-router.get('/signup2', (req, res, next) => { // Ruta de registro de recepcionista
+router.get('/signup2', (req, res, next) => {
     res.render('signup2');
 });
 
-router.get('/habitaciones', (req, res, next) => { // Ruta de habitaciones
-    res.render('habitaciones');
+router.get('/habitaciones', (req, res, next) => {
+  res.render('habitaciones');
 });
 
-router.get('/reservaciones', isAuthenticated, (req, res, next) => { // Ruta de habitaciones
-    // Obtener el EMAIL del usuario autenticado
-    const userEmail = req.user.email;
+/* ----------------------------------------------------------------------- */
+/* ---------------------------- HUÉSPED ---------------------------------- */
 
-    // Obtener las reservaciones del usuario actual desde la base de datos
+router.get('/reservaciones', isAuthenticated, onlyGuest, (req, res, next) => {
+    const userEmail = req.user.email;
     Reservation.find({ email: userEmail })
     .then((reservaciones) => {
-      // Renderizar la vista EJS y pasar los datos de las reservaciones
         res.render('reservaciones', { reservaciones });
     })
     .catch((error) => {
-      // Manejar el error si ocurre
-        console.log(error);
-        res.render('error'); // Renderizar una vista de error, por ejemplo
+        res.render('error');
     });
 });
 
 router.post('/reservaciones/search', isAuthenticated, async (req, res, next) => {
     const { search } = req.body;
-    const query = { email: req.user.email,
-        $or: [
-        { habitacion: { $regex: search.toString(), $options: 'i' } }
-        ]
+    const query = {
+    email: req.user.email,
+    $or: [
+        { habitacion: { $regex: search.toString(), $options: 'i' } },
+        { fecha_inicio: { $regex: search.toString(), $options: 'i' } },
+        { status: { $regex: search, $options: 'i' } },
+    ],
     };
     try {
-        const reservaciones = await Reservation.find(query).lean().exec();
-        res.render('reservaciones', { reservaciones });
+    const reservaciones = await Reservation.find(query).lean().exec();
+    res.render('reservaciones', { reservaciones });
     } catch (error) {
-        console.error(error);
-        res.render('error');
+    res.render('error');
     }
 });
 
@@ -62,82 +78,130 @@ router.get('/reservar', isAuthenticated, (req, res, next) => {
     res.render('reservar');
 });
 
-
-router.post('/reservar', function (req, res){
-    // Obtener los datos enviados en la solicitud
+router.post('/reservar', (req, res) => {
     const {
-        checkInDate,
-        checkOutDate,
-        selectRoom,
-        noPersons,
-        fullName,
-        email,
-        tel
+    checkInDate,
+    checkOutDate,
+    selectRoom,
+    noPersons,
+    fullName,
+    email,
+    tel,
     } = req.body;
 
-    // Verificar si algún dato requerido está faltando
-    if (!checkInDate || !checkOutDate || !selectRoom || !noPersons || !fullName || !email || !tel) {
-        // Redireccionar al formulario de reserva con un mensaje de error
-        req.flash('error', 'Todos los campos son requeridos');
-        return res.redirect('/reservar');
+    if (
+    !checkInDate ||
+    !checkOutDate ||
+    !selectRoom ||
+    !noPersons ||
+    !fullName ||
+    !email ||
+    !tel
+    ) {
+    req.flash('error', 'Todos los campos son requeridos');
+    return res.redirect('/reservar');
     }
 
-    // Crear la instancia de la reserva
     const myReservation = new Reservation({
-        fecha_inicio: checkInDate,
-        fecha_fin: checkOutDate,
-        habitacion: selectRoom,
-        personas: noPersons,
-        huesped: fullName,
-        email: email,
-        tel: tel,
-        status: "Pendiente"
+    fecha_inicio: checkInDate,
+    fecha_fin: checkOutDate,
+    habitacion: selectRoom,
+    personas: noPersons,
+    huesped: fullName,
+    email: email,
+    tel: tel,
+    status: 'Pendiente',
     });
 
-    // Guardar la reserva en la base de datos
     myReservation.save();
-    res.redirect('/reservaciones')
+    res.redirect('/reservaciones');
 });
 
-router.get('/disponibilidad', (req, res, next) => { // Ruta de habitaciones
+router.get('/disponibilidad', (req, res, next) => {
     res.render('disponibilidad');
 });
 
-router.post('/signup', passport.authenticate('local-signup' ,{ // Ruta de registro que utiliza la estrategia local-signup
+router.post(
+    '/signup',
+    passport.authenticate('local-signup', {
     successRedirect: '/profile',
     failureRedirect: '/signup',
-    passReqToCallback: true
-}));
+    passReqToCallback: true,
+    })
+);
 
-router.post('/signup2', passport.authenticate('local-signup2' ,{ // Ruta de registro que utiliza la estrategia local-signup
+router.post(
+    '/signup2',
+    passport.authenticate('local-signup2', {
     successRedirect: '/profile',
     failureRedirect: '/signup2',
-    passReqToCallback: true
-}));
+    passReqToCallback: true,
+    })
+);
 
-router.post('/login', passport.authenticate('local-login' ,{ // Ruta de inicio de sesión que utiliza la estrategia local-login
+router.post(
+    '/login',
+    passport.authenticate('local-login', {
     successRedirect: '/profile',
     failureRedirect: '/login',
-    passReqToCallback: true
-}));
+    passReqToCallback: true,
+    })
+);
 
-router.get('/profile', isAuthenticated, (req, res, next) => { // Ruta de perfil
+router.get('/profile', isAuthenticated, (req, res, next) => {
     res.render('profile');
 });
 
-router.get('/logout', (req, res, next) => { // Ruta de cierre de sesión
+router.get('/logout', (req, res, next) => {
     req.logout(() => {
-        res.redirect('/');
+    res.redirect('/');
     });
 });
 
-function isAuthenticated(req, res, next) { // Función que verifica si el usuario está autenticado
-    if(req.isAuthenticated()){
-        return next();
+router.get(
+    '/cancelReservation/:id',
+    isAuthenticated,
+    onlyGuest,
+    async (req, res, next) => {
+    try {
+        await Reservation.findByIdAndDelete(req.params.id);
+        res.redirect('/reservaciones');
+    } catch (error) {
+        next(error);
     }
+    }
+);
 
-    res.redirect('/login');
-}
+router.get('/editReservation/:id', isAuthenticated, onlyGuest, async (req, res, next) => {
+    try {
+        const reservacion = await Reservation.findById(req.params.id);
+        res.render('updateReservacion', { reservacion });
+    } catch (error) {
+        next(error);
+    }
+});
+
+router.post('/updateReservacion', isAuthenticated, onlyGuest, async (req, res, next) => {
+    await Reservation.findByIdAndUpdate(req.body.id, {
+        fecha_inicio: req.body.checkInDate,
+        fecha_fin: req.body.checkOutDate,
+        habitacion: req.body.selectRoom,
+        personas: req.body.noPersons,
+        huesped: req.body.fullName,
+        email: req.body.email,
+        tel: req.body.tel,
+    })
+    .then(() => {
+        res.redirect('/reservaciones')
+    })
+    .catch((error) => {
+        next(error);
+    });
+});
+
+/* ----------------------------------------------------------------------- */
+/* -------------------------- RECEPCIONISTA ------------------------------ */
 
 
-module.exports = router; // Exporta el módulo router
+
+module.exports = router;

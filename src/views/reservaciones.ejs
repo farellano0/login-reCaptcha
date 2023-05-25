@@ -32,14 +32,24 @@
                             <img class="card-img-top" src="/img/ejecutiva_doble.jpeg" alt="Habitación doble ejecutiva">
                         <% } %>
                         <div class="card-body">
+                            <div class="row">
+                                <% if(reservacion.status === "Pendiente"){ %>
+                                    <a class="btn btn-secondary text-light w-100 disabled" alt="Pendiente"><%= reservacion.status %></a>
+                                <% } else if(reservacion.status === "Check-In"){ %>
+                                    <a class="btn btn-success text-light w-100 disabled" alt="Check-In"><%= reservacion.status %></a>
+                                <% } else { %>
+                                    <a class="btn btn-danger text-light w-100 disabled" alt="Check-Out"><%= reservacion.status %></a>
+                                <% } %>
+                            </div>
+                            <hr>
                             <h5 class="card-title"><%= reservacion.habitacion %></h5>
                             <hr>
                             <div class="row">
                                 <div class="col-6">
-                                    <p class="card-text"><strong>Check-In:</strong> <%= reservacion.fecha_inicio.toLocaleDateString() %></p>
+                                    <p class="card-text"><strong>Check-In:</strong> <%= new Date(reservacion.fecha_inicio).toLocaleDateString() %></p>
                                 </div>
                                 <div class="col-6">
-                                    <p class="card-text"><strong>Check-Out:</strong> <%= reservacion.fecha_fin.toLocaleDateString() %></p>
+                                    <p class="card-text"><strong>Check-Out:</strong> <%= new Date(reservacion.fecha_fin).toLocaleDateString()%></p>
                                 </div>
                             </div>
                             <hr>
@@ -54,16 +64,16 @@
                                 </div>
                             </div>
                             <hr>
-                            <div class="row">
-                        
-                                <% if(reservacion.status === "Pendiente"){ %>
-                                    <a class="btn btn-secondary text-light w-100 disabled" alt="Pendiente"><%= reservacion.status %></a>
-                                <% } else if(reservacion.status === "Check-In"){ %>
-                                    <a class="btn btn-success text-light w-100 disabled" alt="Check-In"><%= reservacion.status %></a>
-                                <% } else if(reservacion.status === "Check-Out") { %>
-                                    <a class="btn btn-danger text-light w-100 disabled" alt="Check-Out"><%= reservacion.status %>
-                                <% } %>
-                            </div>
+                            <% if(reservacion.status === "Pendiente"){ %>
+                                <div class="d-flex row">
+                                    <div class="col-6">
+                                        <a href="<%= `editReservation/${reservacion._id}` %>" class="btn btn-warning text-light w-100" id="btnEdit">Editar<br> información</a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="<%= `cancelReservation/${reservacion._id}` %>" class="btn btn-danger text-light w-100" id="btnCancel" onclick="return confirm('¿Estás seguro de que deseas cancelar la reservación?')">Cancelar<br> reservación</a>
+                                    </div>
+                                </div>
+                            <% } %>                            
                         </div>
                     </div>
                 <% }) %>

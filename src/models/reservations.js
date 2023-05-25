@@ -2,13 +2,13 @@ const mongoose = require('mongoose'); // Importamos la librería de mongoose
 const { Schema } = mongoose; // Extraemos el Schema de mongoose
 
 const reservationSchema = new Schema({
-    fecha_inicio: Date,
-    fecha_fin: Date,
+    fecha_inicio: String,
+    fecha_fin: String,
     habitacion: String,
-    personas: Number,
+    personas: String,
     huesped: String,
     email: String,
-    tel: Number,
+    tel: String,
     status: String,
 });
 
