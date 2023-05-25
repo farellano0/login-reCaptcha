@@ -26,6 +26,13 @@ function onlyRecep(req, res, next) {
     res.redirect('/');
 }
 
+function notUser(req, res, next) {
+    if (!req.user){
+        return next();
+    }
+    res.redirect('/profile');
+}
+
 /* ----------------------------------------------------------------------- */
 /* ------------------------------- RAÍZ ---------------------------------- */
 
@@ -33,20 +40,20 @@ router.get('/', (req, res, next) => {
     res.render('index');
 });
 
-router.get('/login', (req, res, next) => {
+router.get('/login', notUser, (req, res, next) => {
     res.render('login');
 });
 
-router.get('/signup', (req, res, next) => {
+router.get('/signup', notUser, (req, res, next) => {
     res.render('signup');
 });
 
-router.get('/signup2', (req, res, next) => {
+router.get('/signup2', onlyRecep, (req, res, next) => {
     res.render('signup2');
 });
 
 router.get('/habitaciones', (req, res, next) => {
-  res.render('habitaciones');
+    res.render('habitaciones');
 });
 
 /* ----------------------------------------------------------------------- */
@@ -213,6 +220,20 @@ router.get('/reservas', isAuthenticated, onlyRecep, (req, res, next) =>{
         res.render('error');
     });
 });
+
+router.get(
+    '/cancelReservation2/:id',
+    isAuthenticated,
+    onlyRecep,
+    async (req, res, next) => {
+    try {
+        await Reservation.findByIdAndDelete(req.params.id);
+        res.redirect('/reservas');
+    } catch (error) {
+        next(error);
+    }
+    }
+);
 
 router.get('/checkin', isAuthenticated, onlyRecep, (req, res, next) =>{
     Reservation.find({ status: "Pendiente" })
