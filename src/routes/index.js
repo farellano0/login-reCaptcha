@@ -19,6 +19,13 @@ function onlyGuest(req, res, next) {
     res.redirect('/');
 }
 
+function onlyRecep(req, res, next) {
+    if (req.user.usertype === 'Recepcionista') {
+        return next();
+    }
+    res.redirect('/');
+}
+
 /* ----------------------------------------------------------------------- */
 /* ------------------------------- RAÍZ ---------------------------------- */
 
@@ -117,10 +124,6 @@ router.post('/reservar', (req, res) => {
     res.redirect('/reservaciones');
 });
 
-router.get('/disponibilidad', (req, res, next) => {
-    res.render('disponibilidad');
-});
-
 router.post(
     '/signup',
     passport.authenticate('local-signup', {
@@ -172,7 +175,7 @@ router.get(
     }
 );
 
-router.get('/editReservation/:id', isAuthenticated, onlyGuest, async (req, res, next) => {
+router.get('/editReservation/:id', isAuthenticated, async (req, res, next) => {
     try {
         const reservacion = await Reservation.findById(req.params.id);
         res.render('updateReservacion', { reservacion });
@@ -201,7 +204,143 @@ router.post('/updateReservacion', isAuthenticated, onlyGuest, async (req, res, n
 
 /* ----------------------------------------------------------------------- */
 /* -------------------------- RECEPCIONISTA ------------------------------ */
+router.get('/reservas', isAuthenticated, onlyRecep, (req, res, next) =>{
+    Reservation.find({ status: "Pendiente" })
+    .then((reservaciones) => {
+        res.render('reservas', { reservaciones });
+    })
+    .catch((error) => {
+        res.render('error');
+    });
+});
 
+router.get('/checkin', isAuthenticated, onlyRecep, (req, res, next) =>{
+    Reservation.find({ status: "Pendiente" })
+    .then((reservaciones) => {
+        res.render('checkin', { reservaciones });
+    })
+    .catch((error) => {
+        res.render('error');
+    });
+});
 
+router.post('/checkin/search', isAuthenticated, async (req, res, next) => {
+    const { searchGuest } = req.body;
+    const query = {
+    status: "Pendiente",
+    $or: [
+        { huesped: { $regex: searchGuest.toString(), $options: 'i' } },
+        { email: { $regex: searchGuest.toString(), $options: 'i' } },
+    ],
+    };
+    try {
+    const reservaciones = await Reservation.find(query).lean().exec();
+    res.render('checkin', { reservaciones });
+    } catch (error) {
+    res.render('error');
+    }
+});
+
+router.get('/checkout', isAuthenticated, onlyRecep, (req, res, next) =>{
+    Reservation.find({ status: "Check-In" })
+    .then((reservaciones) => {
+        res.render('checkout', { reservaciones });
+    })
+    .catch((error) => {
+        res.render('error');
+    });
+});
+
+router.post('/reservas/search', isAuthenticated, async (req, res, next) => {
+    const { search } = req.body;
+    const query = {
+    status: "Pendiente",
+    $or: [
+        { huesped: { $regex: search.toString(), $options: 'i' } },
+        { email: { $regex: search.toString(), $options: 'i'} },
+        { habitacion: { $regex: search.toString(), $options: 'i' } },
+        { fecha_inicio: { $regex: search.toString(), $options: 'i' } },
+    ],
+    };
+    try {
+    const reservaciones = await Reservation.find(query).lean().exec();
+    res.render('reservas', { reservaciones });
+    } catch (error) {
+    res.render('error');
+    }
+});
+
+router.post('/updateReservacion2', isAuthenticated, async (req, res, next) => {
+    await Reservation.findByIdAndUpdate(req.body.id, {
+        fecha_inicio: req.body.checkInDate,
+        fecha_fin: req.body.checkOutDate,
+        habitacion: req.body.selectRoom,
+        personas: req.body.noPersons,
+        huesped: req.body.fullName,
+        email: req.body.email,
+        tel: req.body.tel,
+    })
+    .then(() => {
+        res.redirect('/reservas')
+    })
+    .catch((error) => {
+        next(error);
+    });
+});
+
+router.get('/addReservation', isAuthenticated, onlyRecep, (req, res, next) => {
+    res.render('addReservation');
+});
+
+router.post('/addReservation', (req, res) => {
+    const {
+    checkInDate,
+    checkOutDate,
+    selectRoom,
+    noPersons,
+    fullName,
+    email,
+    tel,
+    } = req.body;
+
+    if (
+    !checkInDate ||
+    !checkOutDate ||
+    !selectRoom ||
+    !noPersons ||
+    !fullName ||
+    !email ||
+    !tel
+    ) {
+    req.flash('error', 'Todos los campos son requeridos');
+    return res.redirect('/reservas');
+    }
+
+    const myReservation = new Reservation({
+    fecha_inicio: checkInDate,
+    fecha_fin: checkOutDate,
+    habitacion: selectRoom,
+    personas: noPersons,
+    huesped: fullName,
+    email: email,
+    tel: tel,
+    status: 'Pendiente',
+    });
+
+    myReservation.save();
+    res.redirect('/reservas');
+});
+
+router.post('/checkInReservation', isAuthenticated, onlyGuest, async (req, res, next) => {
+    await Reservation.findByIdAndUpdate(req.body.id, {
+        status: 'Check-In'
+    })
+    .then(() => {
+        res.redirect('/checkin')
+    })
+    .catch((error) => {
+        next(error);
+    });
+});
 
 module.exports = router;

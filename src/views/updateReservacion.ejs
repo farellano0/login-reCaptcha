@@ -1,0 +1,184 @@
+<%- layout('layouts/main.ejs') %>
+
+<div class="container">
+    <% if (error) { %>
+        <div class="alert alert-danger"><%= error %></div>
+    <% } %>   
+</div>
+
+
+<div class="container-fluid">
+    <div style="background-color: rgba(255, 255, 255, 0.616);">
+        <hr>
+        <h1 class="text-center font-weight-normal mb-3 display-4" style="letter-spacing: 2px;">Edita la reservación</h1>
+        <hr>
+    </div>
+    <form class="container mt-3" action="<%= user.usertype === 'Huésped' ? '/updateReservacion' : '/updateReservacion2' %>" method="POST">
+        <div class="row mt-5 tarjeta"> <!-- Check-in & Check-out -->
+            <div class="col-12 col-lg-6 col-md-6 form-group mt-3">
+                <label for="checkIn" class="font-weight-bold">Check-in:</label>
+                <input type="date" class="form-control" id="checkInDate" name="checkInDate" aria-describedby="dateHelp" placeholder="" value="<%= reservacion.fecha_inicio %>">
+            </div>
+            <div class="col-12 col-lg-6 col-md-6 form-group mt-3">
+                <label for="checkOut" class="font-weight-bold">Check-out:</label>
+                <input type="date" class="form-control" id="checkOutDate" name="checkOutDate" aria-describedby="dateHelp" placeholder="" value="<%= reservacion.fecha_fin %>">
+            </div>
+        </div>
+        <div class="row mt-3 tarjeta"> <!-- Seleccionar habitación -->
+            <div class="col-12 form-group mt-3">
+                <label for="selectRoom" class="font-weight-bold">Selecciona tu habitación:</label>
+                <select class="custom-select" id="selectRoom" name="selectRoom">
+                    <option <% if (reservacion.habitacion === 'Ejecutiva') { %>selected<% } %> value="Ejecutiva">Ejecutiva</option>
+                    <option <% if (reservacion.habitacion === 'Ejecutiva doble') { %>selected<% } %> value="Ejecutiva doble">Ejecutiva doble</option>
+                </select>
+                
+            </div>
+        </div>
+        <!-- Tarjeta de la habitación Ejecutiva -->
+        <div class="row room-list-item mt-3 tarjeta" id="ejecutivaCard" style="display: none;">
+            <div class="col-12 col-md-3 mt-3 mb-3">
+                <img class="img-fluid img-thumbnail" src="/img/ejecutiva.jpeg" alt="Habitación ejecutiva">
+            </div>
+            <div class="col-12 col-md-9 mt-3">
+                <h4 class="title">Ejecutiva</h4> 
+                <p class="text-justify description">Confortable habitación con 1 cama king, con balcón vista al jardín o a la calle, con los servicios de aire acondicionado, TV por cable, Wi-Fi gratis, baño completo con ducha, amenidades de baño, secadora de cabello a solicitud en recepción.</p>
+                <hr>
+                <ul class="list-inline mt-2 text-center text-md-left">
+                    <li class="list-inline-item"><span class="font-weight-bolder h5 pr-2 border-right">15 m²</span></li>
+                    <li class="list-inline-item"><span data-toggle="tooltip" title="" class="font-weight-bolder h5 pr-2" data-original-title="Maximo de personas 2"><i class="fas fa-user-friends"></i></span>: 2 personas</li> 
+                    <li class="list-inline-item"><span data-toggle="tooltip" title="" class="font-weight-bolder h5 pr-2" data-original-title="1 cama king"><i class="fas fa-bed"></i></span>: 1 King Size</li> 
+                    <li class="list-inline-item"><span data-toggle="tooltip" title="" class="font-weight-bolder h5 pr-2" data-original-title="Vista al jardin"><i class="fas fa-eye"></i></span>: Vista al jardín</li>
+                </ul>
+            </div>
+        </div>
+        <!-- Tarjeta de la habitación Ejecutiva Doble -->
+        <div class="row room-list-item mt-3 tarjeta" id="ejecutivaDobleCard" style="display: none;">
+            <div class="col-12 col-md-3 mt-3 mb-3">
+                <img class="img-fluid img-thumbnail" src="/img/ejecutiva_doble.jpeg" alt="Habitación doble ejecutiva">
+            </div>
+            <div class="col-12 col-md-9 mt-3">
+                <h4 class="title">Ejecutiva Doble</h4> 
+                <p class="text-justify description">Confortable habitación amplia con 2 camas matrimoniales, con balcón vista al jardín o a la calle, con los servicios de aire acondicionado, TV por cable, Wi-Fi gratis, baño completo con ducha, amenidades de baño, secadora de cabello a solicitud en recepción.</p>
+                <hr>
+                <ul class="list-inline mt-2 text-center text-md-left">
+                    <li class="list-inline-item"><span class="font-weight-bolder h5 pr-2 border-right">20    m²</span></li>
+                    <li class="list-inline-item"><span data-toggle="tooltip" title="" class="font-weight-bolder h5 pr-2" data-original-title="Maximo de personas 2"><i class="fas fa-user-friends"></i></span>: 4 personas</li> 
+                    <li class="list-inline-item"><span data-toggle="tooltip" title="" class="font-weight-bolder h5 pr-2" data-original-title="1 cama king"><i class="fas fa-bed"></i></span>: 2 Matrimoniales</li> 
+                    <li class="list-inline-item"><span data-toggle="tooltip" title="" class="font-weight-bolder h5 pr-2" data-original-title="Vista al jardin"><i class="fas fa-eye"></i></span>: Vista al jardín</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row mt-3 tarjeta"> <!-- Numero de personas -->
+            <div class="col-12 form-group mt-3">
+                <label for="noPersons" class="font-weight-bold">Número de personas:</label>
+                <input type="number" class="form-control" id="noPersons" name="noPersons" placeholder="¿Cuántas personas se van a hospedar?" min="1" max="4" value="<%= reservacion.personas %>">
+            </div>
+        </div>
+        <!-- Información del huesped -->
+        <div class="row mt-3 tarjeta">
+            <div class="col-12 mt-3 mb-1">
+                <h3 class="text-center font-weight-normal mb-1" style="letter-spacing: 2px;">Información de Contacto</h3>
+                <p class="text-center font-weight-bold">Escriba lo que se le indica para poder hacer la reservación</p>
+                <hr>
+            </div>
+            <div class="col-12 mt-1 form-group">
+                <label for="fullName" class="font-weight-bold">Nombre completo:</label>
+                <input type="text" name="fullName" id="fullName" class="form-control" value="<%= reservacion.huesped %>">
+            </div>
+            <div class="col-12 mt-1 form-group">
+                <label for="email" class="font-weight-bold">Dirección de correo elecrónico:</label>
+                <input type="email" name="email" id="email" class="form-control" value="<%= reservacion.email %>">
+            </div>
+            <div class="col-12 mt-1 form-group">
+                <label for="tel" class="font-weight-bold">Número de teléfono:</label>
+                <input type="tel" name="tel" id="tel" class="form-control" value="<%= reservacion.tel %>">
+            </div>
+            <div class="col-12 mt-1 form-group">
+                <input class="form-control" style="display: none;" type="text" id="id" name="id" value="<%= reservacion._id %>">
+            </div>
+            <div class="col-12 col-lg-6 col-md-6 mt-1 form-group">
+                <button type="submit" class="btn btn-success btn-block mt-4">Guardar reservación</button>
+            </div>
+            <div class="col-12 col-lg-6 col-md-6 mt-1 form-group">
+                <a href="<%= user.usertype === 'Huésped' ? '/reservaciones' : '/reservas' %>" class="btn btn-danger btn-block mt-4 text-light">Cancelar edición</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+//-------------------------- CHECK-IN -------------------------------------
+    // Obtener el elemento del campo de fecha de check-in
+    const checkInDateInput = document.getElementById('checkInDate');
+
+    // Obtener la fecha actual
+    const fechaActual = new Date();
+
+    // Formatear la fecha actual en el formato requerido por el campo de fecha (YYYY-MM-DD)
+    const formatoFecha = fechaActual.toISOString().split('T')[0];
+
+    // Establecer la fecha actual como valor mínimo
+    checkInDateInput.min = formatoFecha;
+
+//----------------------------------------------------------------------------
+//-------------------------- CHECK-OUT ---------------------------------------
+    // Obtener los elementos de los campos de fecha de Check-Out
+    const checkOutDateInput = document.getElementById('checkOutDate');
+
+    // Escuchar el evento 'change' en el campo de fecha de check-in
+    checkInDateInput.addEventListener('change', function() {
+        // Obtener la fecha seleccionada en el campo de check-in
+        const checkInDate = new Date(this.value);
+
+        // Incrementar la fecha seleccionada en un día
+        checkInDate.setDate(checkInDate.getDate() + 1);
+
+        // Formatear la fecha en el formato requerido por el campo de fecha de check-out (YYYY-MM-DD)
+        const formatoFecha = checkInDate.toISOString().split('T')[0];
+
+        // Establecer la fecha mínima en el campo de fecha de check-out
+        checkOutDateInput.min = formatoFecha;
+    });
+
+    //-------------------------- HABITACIÓN -------------------------------------
+    // Obtener el elemento del campo de selección de habitación
+    const selectRoom = document.getElementById('selectRoom');
+
+    // Obtener las tarjetas de las habitaciones
+    const ejecutivaCard = document.getElementById('ejecutivaCard');
+    const dobleEjecutivaCard = document.getElementById('ejecutivaDobleCard');
+
+    // Escuchar el evento 'change' en el campo de selección de habitación
+    selectRoom.addEventListener('change', function() {
+        // Ocultar todas las tarjetas de habitaciones
+        ejecutivaCard.style.display = 'none';
+        dobleEjecutivaCard.style.display = 'none';
+
+        // Mostrar la tarjeta de la habitación seleccionada
+        const selectedRoom = this.value;
+        if (selectedRoom === 'Ejecutiva') {
+            ejecutivaCard.style.display = 'flex';
+        } else if (selectedRoom === 'Ejecutiva doble') {
+            dobleEjecutivaCard.style.display = 'flex';
+        }
+    });
+    //------------------------- NO. PERSONAS ---------------------------------------
+    // Obtén el elemento del campo de entrada de número
+    const noPersonsInput = document.getElementById('noPersons');
+
+    // Define los límites máximos de personas para cada tipo de habitación
+    const maxPersonsEjecutiva = 2;
+    const maxPersonsEjecutivaDoble = 4;
+
+    // Escucha el evento 'change' en el campo de selección de habitación
+    selectRoom.addEventListener('change', function() {
+        // Obtén el valor seleccionado del campo de selección de habitación
+        const selectedRoom = this.value;
+
+        // Establece el límite máximo del campo de entrada de número según el tipo de habitación seleccionado
+        if (selectedRoom === 'Ejecutiva') {
+            noPersonsInput.max = maxPersonsEjecutiva;
+        } else if (selectedRoom === 'Ejecutiva doble') {
+            noPersonsInput.max = maxPersonsEjecutivaDoble;
+        }
+    });
+</script>

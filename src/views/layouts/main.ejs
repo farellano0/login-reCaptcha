@@ -19,7 +19,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #993D33;">
             <a class="navbar-brand font-weight-bold" href="/"><i class="fa-solid fa-hotel"></i> HOTEL</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
@@ -38,6 +38,8 @@
                     <li class="nav-item"> <!-- Signup-->
                         <a class="nav-link font-weight-bold" href="/signup"><i class="fa-solid fa-user-plus"></i> Registrarse</a>
                     </li>
+
+                    <!-------------    HUESPED   --------------------->
                 <% } else if(user.usertype === "Huésped") { %> <!-- Navbar de huéped -->
                     <li class="nav-item"> <!-- Mi perfil -->
                         <a class="nav-link font-weight-bold" href="/profile"><i class="fa-solid fa-user"></i></i> Mi perfil</a>
@@ -55,14 +57,14 @@
                         <a class="nav-link font-weight-bold" href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
                     </li>
                 <% } else { %>
-                    <li class="nav-item"> <!-- Habitaciones -->
-                        <a class="nav-link font-weight-bold" href="/rooms"><i class="fa-solid fa-bed"></i> Habitaciones</a>
-                    </li>
                     <li class="nav-item"> <!-- Reservas -->
                         <a class="nav-link font-weight-bold" href="/reservas"><i class="fa-solid fa-bell-concierge"></i> Reservas</a>
                     </li>
+                    <li class="nav-item"> <!-- Check-In / Check-Out -->
+                        <a class="nav-link font-weight-bold" href="/checkin"><i class="fa-solid fa-money-check"></i></i> Check-In</a>
+                    </li>
                     <li class="nav-item"> <!-- Huéspedes -->
-                        <a class="nav-link font-weight-bold" href="/huespedes"><i class="fa-solid fa-person-walking-luggage"></i> Huéspedes</a>
+                        <a class="nav-link font-weight-bold" href="/checkout"><i class="fa-solid fa-money-check-dollar"></i> Check-Out</a>
                     </li>
                     <li class="nav-item"> <!-- LogOut -->
                         <a class="nav-link font-weight-bold" href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
